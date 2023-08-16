@@ -6,6 +6,8 @@ import { AuthenticationService } from './services/authentication.service';
 import { StatusBar } from '@capacitor/status-bar';
 import { Platform } from '@ionic/angular';
 import { VaultService } from './services/vault.service';
+import { Meta } from '@angular/platform-browser';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +20,7 @@ export class AppComponent {
     private router: Router,
     private vaultService: VaultService,
     private platform: Platform,
+    private meta: Meta,
     private ngZone: NgZone) {
     this.initializeApp();
     this.platform.resume.subscribe(() => {
@@ -25,6 +28,17 @@ export class AppComponent {
       setTimeout(() => {
         this.checkAuth();
       }, 300); // This gives time for the vault to be locked because the vault uses lockAfterBackgrounded feature
+    });
+  }
+
+  public ngOnInit(): void {
+    this.setContentSecurityPolicy();
+  }
+
+  private setContentSecurityPolicy() {
+    this.meta.addTag({
+      'http-equiv': 'Content-Security-Policy',
+      content: environment.csp
     });
   }
 
